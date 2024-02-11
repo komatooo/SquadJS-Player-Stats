@@ -419,7 +419,7 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
     }
 
     async authenticateInWhitelister() {
-            this.verbose("Trying to sign in to whitelister.");
+            this.verbose(1, "Trying to sign in to whitelister.");
 
             const response = 
                 await axios.post(
@@ -430,7 +430,7 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
                 });
             
             this.whitelisterCookie = response.headers["Set-Cookie"];
-            this.verbose(`Succesfully signed in to whiteliser, cookie: ${this.whitelisterCookie}`);
+            this.verbose(1, `Succesfully signed in to whitelister, cookie: ${this.whitelisterCookie}`);
     }
 
     handleApiError(error) {
