@@ -429,8 +429,12 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
                     "password": this.options.whitelisterPassword 
                 });
             
-            this.whitelisterCookie = response.headers["Set-Cookie"];
-            this.verbose(1, `Succesfully signed in to whitelister, cookie: ${this.whitelisterCookie}`);
+            if (response.status == 200) {
+                this.whitelisterCookie = response.headers["Set-Cookie"];
+                this.verbose(1, `Succesfully signed in to whitelister, response: ${response}`);
+            } else {
+                this.verbose(1, `Error signing in to whitelister, response status ${response.status}`);
+            }
     }
 
     handleApiError(error) {
@@ -679,6 +683,7 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
             try {
                 const playerSteamID = null;
                 //Trying to get it from Whitelister                
+                this.verbose(1, `Trying to get steamId from whitelister for discord user ${message.author.id}`);
                 const response = 
                     await axios.get(
                         `${this.options.whitelisterUrl}api/players/read/from/discordUserId/${message.author.id}`,
