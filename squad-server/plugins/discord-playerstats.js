@@ -3,6 +3,7 @@ import DiscordBasePlugin from './discord-base-plugin.js';
 import Sequelize from 'sequelize';
 import { Op } from 'sequelize';
 import moment from 'moment';
+import axios from 'axios';
 
 const { DataTypes } = Sequelize;
 
@@ -122,7 +123,22 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
                 required: false,
                 description: 'Role allowed to trigger manual posting of Daily Stats.',
                 default: '667741905228136459'
-            }
+            },
+            whitelisterUrl: {
+                required: true,
+                description: 'URL of whitelister',
+                default: null
+            },
+            whitelisterLogin: {
+                required: false,
+                description: 'Whitelister user login',
+                default: null
+            },
+            whitelisterPassword: {
+                required: false,
+                description: 'Whitelister user password',
+                default: null
+            },
         };
     }
 
@@ -130,6 +146,8 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
         super(server, options, connectors);
 
         this.models = {};
+        
+        this.whitelisterCookie = null;
 
         this.createModel(
             'Player',
@@ -367,11 +385,7 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
         this.onMessage = this.onMessage.bind(this);
     }
 
-    createModel(name, schema) {
-        this.models[name] = this.options.database.define(`DBLog_${name}`, schema, {
-            timestamps: false
-        });
-    }
+ 
 
     async mount() {
         this.checkVersion();
@@ -389,9 +403,9 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
         if (this.options.enableInGameStatsCommand === true) {
             this.server.on(`CHAT_COMMAND:${this.options.inGameStatsCommand}`, this.onStatCommand);
         }
-        if (this.options.enableInDiscordStatsCommand === true) {
-            this.server.on(`CHAT_COMMAND:${this.options.linkInGameAccountCommand}`, this.onLinkCommand);
-        }
+        // if (this.options.enableInDiscordStatsCommand === true) {
+        //     this.server.on(`CHAT_COMMAND:${this.options.linkInGameAccountCommand}`, this.onLinkCommand);
+        // }
         this.verbose(1, 'PlayerStats Plugin was Mounted.');
         // Verify that the database connection was successful
         try {
@@ -400,12 +414,49 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
         } catch (error) {
             this.verbose(1, `Database connection failed: ${error}`);
         }
+
+        await this.authenticateInWhitelister();
+    }
+
+    async authenticateInWhitelister() {
+            const response = 
+                axios.post(
+                    `${this.options.whitelisterUrl}/api/login`,
+                { 
+                    "username": this.options.whitelisterLogin, 
+                    "password": this.options.whitelisterPassword 
+                });
+            
+            this.whitelisterCookie = response.headers["Set-Cookie"];
+            this.verbose(`Succesfully signed in to whiteliser, cookie: ${this.whitelisterCookie}`);
+    }
+
+    handleApiError(error) {
+        if (error.response) {
+          let errMsg = `${error.response.status} - ${error.response.statusText}`;
+          if (error.response.status === 502) {
+            errMsg += ' | Unable to connect to the Whitelister API.';
+          }
+          return errMsg;
+        } else if (error.request) {
+          // The request was made but no response was received
+          return 'No response received from the Whitelister API. Please check your network connection.';
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          return `Error: ${error.message}`;
+        }
+      }
+
+    createModel(name, schema) {
+        this.models[name] = this.options.database.define(`DBLog_${name}`, schema, {
+            timestamps: false
+        });
     }
 
     async unmount() {
         this.options.discordClient.removeEventListener('message', this.onMessage);
         this.server.removeEventListener(`CHAT_COMMAND:${this.options.statsCommand}`, this.onStatCommand);
-        this.server.removeEventListener(`CHAT_COMMAND:${this.options.linkInGameAccountCommand}`, this.onLinkCommand);
+        // this.server.removeEventListener(`CHAT_COMMAND:${this.options.linkInGameAccountCommand}`, this.onLinkCommand);
         this.verbose(1, 'PlayerStats Plugin was Unmounted.');
     }
 
@@ -621,17 +672,25 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
                 await this.postUserStats(steamID);
                 return;
             }
-            const playerResult = await this.models.Player.findOne({
-                where: {
-                    discordID: message.author.id
-                },
-                attributes: ['steamID']
-            });
-            const playerSteamID = playerResult ? playerResult.steamID : null;
-            if (!playerSteamID) {
-                return message.reply(`Your Discord Account is not linked to an In Game Account.\nUse \`!${this.options.linkDiscordAccountCommand}\` in Discord to begin linking your account.\nOr use \`!mystats "Your SteamID"\``);
+
+            //Trying to get it from Whitelister                
+            try {
+                const playerSteamID = null;
+                //Trying to get it from Whitelister                
+                const response = 
+                    await axios.get(
+                        `${this.options.whitelisterUrl}api/players/read/from/discordUserId/${message.author.id}`,
+                        { headers: {'Cookie': this.whitelisterCookie }}
+                    );
+                if (response.status == 200)
+                    playerSteamID = response.data.steamid64;
+                if (!playerSteamID) {
+                    return message.reply(`Your Discord Account is not linked to an In Game Account.\nUse \`!${this.options.linkDiscordAccountCommand}\` in Discord to begin linking your account.\nOr use \`!mystats "Your SteamID"\``);
+                }
+                await this.postUserStats(playerSteamID);
+            } catch (error) {
+                return this.handleApiError(error);
             }
-            await this.postUserStats(playerSteamID);
             return;
         } else if (message.content.match(mystatsCmdRegex) && this.options.enableInDiscordStatsCommand === false) {
             return message.reply('In Discord Stats are not enabled.');
