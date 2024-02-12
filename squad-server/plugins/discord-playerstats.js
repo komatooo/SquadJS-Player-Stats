@@ -857,6 +857,12 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
             },
             attributes: ['lastName']
         });
+
+        if (!playerResult) {
+            this.sendDiscordMessage(`There is no statistics for player with steamID ${steamID} yet.`);
+            return;
+        }
+
         const lastName = playerResult ? playerResult.lastName : null;
 
         // Calculate total kills for the player
