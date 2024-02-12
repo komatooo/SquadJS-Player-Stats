@@ -10,6 +10,7 @@ const { DataTypes } = Sequelize;
 // Function written by Nath
 // Function removes BM_ from string content as well as replaces all "_" with " "
 function modifyString(string) {
+    if (string == null) return string;
     if (string.startsWith("BP_")) {
         string = string.slice(3);
     }
@@ -993,11 +994,11 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
                         value: revivesCount.toString(),
                         inline: true
                     },
-                    // {
-                    //     name: 'Favorite Weapon',
-                    //     value: modifyString(weapon),
-                    //     inline: true
-                    // },
+                    {
+                        name: 'Favorite Weapon',
+                        value: modifyString(weapon),
+                        inline: true
+                    },
                     {
                         name: 'Top Victim',
                         value: `\`${lastName}\` has Killed \`${topVictim}\` \`${topVictimCount}\` Times!`,
