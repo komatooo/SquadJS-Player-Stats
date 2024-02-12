@@ -419,7 +419,7 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
     }
 
     async authenticateInWhitelister() {
-            this.verbose(1, "Trying to sign in to whitelister.");
+            this.verbose(1, `Trying to sign in to whitelister using URL: ${this.options.whitelisterUrl}/api/login, username: ${this.options.whitelisterLogin}`);
 
             const response = 
                 await axios.post(
