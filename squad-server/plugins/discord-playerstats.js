@@ -1066,21 +1066,21 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
                         value: killsCount.toString(),
                         inline: true
                     },
-        //             {
-        //                 name: 'Total Wounds',
-        //                 value: woundsCount.toString(),
-        //                 inline: true
-        //             },
-        //             {
-        //                 name: 'Total Deaths',
-        //                 value: deathsCount.toString(),
-        //                 inline: true
-        //             },
-        //             {
-        //                 name: 'K/D Ratio',
-        //                 value: kdRatio,
-        //                 inline: true
-        //             },
+                    {
+                        name: 'Total Wounds',
+                        value: woundsCount.toString(),
+                        inline: true
+                    },
+                    {
+                        name: 'Total Deaths',
+                        value: deathsCount.toString(),
+                        inline: true
+                    },
+                    {
+                        name: 'K/D Ratio',
+                        value: kdRatio,
+                        inline: true
+                    },
         //             {
         //                 name: 'Times Teamkilled',
         //                 value: teamkilledCount.toString(),
