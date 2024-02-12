@@ -698,7 +698,7 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
                 this.verbose(1, `Response status from data: ${response.data.status}`);
                 
                 if (response.status == 200 && response.data) {                   
-                    this.verbose(1, `Found steamid ${playerSteamID} for discord user ${message.author.id}`);
+                    this.verbose(1, `Found steamid ${response.data.steamid64} for discord user ${message.author.id}`);
                     playerSteamID = response.data.steamid64;
                 }
                 else {
