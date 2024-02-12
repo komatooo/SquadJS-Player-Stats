@@ -945,109 +945,109 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
     }
 
     async postUserStats(steamID) {
-        // const daysAgo = moment().subtract(this.options.daysBackToQuery, 'days').toDate();
+        const daysAgo = moment().subtract(this.options.daysBackToQuery, 'days').toDate();
 
-        // // Get Player
-        // const playerResult = await this.models.Player.findOne({
-        //     where: {
-        //         steamID: steamID
-        //     },
-        //     attributes: ['lastName']
-        // });
-        // const lastName = playerResult ? playerResult.lastName : null;
+        // Get Player
+        const playerResult = await this.models.Player.findOne({
+            where: {
+                steamID: steamID
+            },
+            attributes: ['lastName']
+        });
+        const lastName = playerResult ? playerResult.lastName : null;
 
-        // // Calculate total kills for the player
-        // const killsCount = await this.models.Death.count({
-        //     where: {
-        //         attacker: steamID,
-        //         time: { [Op.gte]: daysAgo },
-        //         teamkill: false
-        //     }
-        // });
-        // // Calculate Favorite Weapon
-        // const weaponResult = await this.models.Wound.findOne({
-        //     where: {
-        //         attacker: steamID,
-        //         time: { [Op.gte]: daysAgo },
-        //         teamkill: false
-        //     },
-        //     attributes: ['weapon'],
-        //     group: ['weapon'],
-        //     order: [[Sequelize.literal('COUNT(weapon)'), 'DESC']],
-        //     limit: 1
-        // });
-        // const weapon = weaponResult ? weaponResult.weapon : null;
-        // // Wounds
-        // const woundsCount = await this.models.Wound.count({
-        //     where: {
-        //         attacker: steamID,
-        //         time: { [Op.gte]: daysAgo },
-        //         teamkill: false
-        //     }
-        // });
-        // // Deaths
-        // const deathsCount = await this.models.Death.count({
-        //     where: {
-        //         victim: steamID,
-        //         time: { [Op.gte]: daysAgo },
-        //         teamkill: { [Op.ne]: null }
-        //     }
-        // });
-        // // Times Teamkilled
-        // const teamkilledCount = await this.models.Death.count({
-        //     where: {
-        //         victim: steamID,
-        //         time: { [Op.gte]: daysAgo },
-        //         teamkill: true
-        //     }
-        // });
-        // // Revives
-        // const revivesCount = await this.models.Revive.count({
-        //     where: {
-        //         reviver: steamID,
-        //         time: { [Op.gte]: daysAgo }
-        //     }
-        // });
+        // Calculate total kills for the player
+        const killsCount = await this.models.Death.count({
+            where: {
+                attacker: steamID,
+                time: { [Op.gte]: daysAgo },
+                teamkill: false
+            }
+        });
+        // Calculate Favorite Weapon
+        const weaponResult = await this.models.Wound.findOne({
+            where: {
+                attacker: steamID,
+                time: { [Op.gte]: daysAgo },
+                teamkill: false
+            },
+            attributes: ['weapon'],
+            group: ['weapon'],
+            order: [[Sequelize.literal('COUNT(weapon)'), 'DESC']],
+            limit: 1
+        });
+        const weapon = weaponResult ? weaponResult.weapon : null;
+        // Wounds
+        const woundsCount = await this.models.Wound.count({
+            where: {
+                attacker: steamID,
+                time: { [Op.gte]: daysAgo },
+                teamkill: false
+            }
+        });
+        // Deaths
+        const deathsCount = await this.models.Death.count({
+            where: {
+                victim: steamID,
+                time: { [Op.gte]: daysAgo },
+                teamkill: { [Op.ne]: null }
+            }
+        });
+        // Times Teamkilled
+        const teamkilledCount = await this.models.Death.count({
+            where: {
+                victim: steamID,
+                time: { [Op.gte]: daysAgo },
+                teamkill: true
+            }
+        });
+        // Revives
+        const revivesCount = await this.models.Revive.count({
+            where: {
+                reviver: steamID,
+                time: { [Op.gte]: daysAgo }
+            }
+        });
 
-        // // Calculate K/D
-        // const kdRatio = deathsCount !== 0 ? (killsCount / deathsCount).toFixed(2) : 0;
+        // Calculate K/D
+        const kdRatio = deathsCount !== 0 ? (killsCount / deathsCount).toFixed(2) : 0;
 
-        // // Top Victim
-        // const topVictimResult = await this.models.Death.findOne({
-        //     where: {
-        //         attacker: steamID,
-        //         time: { [Op.gte]: daysAgo },
-        //         teamkill: false,
-        //         victim: { [Op.not]: steamID }
-        //     },
-        //     attributes: ['victimName', [Sequelize.fn('COUNT', Sequelize.literal('victim')), 'Count']],
-        //     group: ['victimName'],
-        //     order: [[Sequelize.literal('Count'), 'DESC']],
-        //     limit: 1
-        // });
-        // const topVictim = topVictimResult ? topVictimResult.victimName : null;
-        // const topVictimCount = topVictimResult ? topVictimResult.get('Count') : null;
+        // Top Victim
+        const topVictimResult = await this.models.Death.findOne({
+            where: {
+                attacker: steamID,
+                time: { [Op.gte]: daysAgo },
+                teamkill: false,
+                victim: { [Op.not]: steamID }
+            },
+            attributes: ['victimName', [Sequelize.fn('COUNT', Sequelize.literal('victim')), 'Count']],
+            group: ['victimName'],
+            order: [[Sequelize.literal('Count'), 'DESC']],
+            limit: 1
+        });
+        const topVictim = topVictimResult ? topVictimResult.victimName : null;
+        const topVictimCount = topVictimResult ? topVictimResult.get('Count') : null;
 
-        // // Top Nemesis
-        // const topNemesisResult = await this.models.Death.findOne({
-        //     where: {
-        //         victim: steamID,
-        //         time: { [Op.gte]: daysAgo },
-        //         teamkill: false,
-        //         attacker: { [Op.not]: steamID }
-        //     },
-        //     attributes: ['attackerName', [Sequelize.fn('COUNT', Sequelize.literal('attacker')), 'Count']],
-        //     group: ['attackerName'],
-        //     order: [[Sequelize.literal('Count'), 'DESC']],
-        //     limit: 1
-        // });
-        // const topNemesis = topNemesisResult ? topNemesisResult.attackerName : null;
-        // const topNemesisCount = topNemesisResult ? topNemesisResult.get('Count') : null;
+        // Top Nemesis
+        const topNemesisResult = await this.models.Death.findOne({
+            where: {
+                victim: steamID,
+                time: { [Op.gte]: daysAgo },
+                teamkill: false,
+                attacker: { [Op.not]: steamID }
+            },
+            attributes: ['attackerName', [Sequelize.fn('COUNT', Sequelize.literal('attacker')), 'Count']],
+            group: ['attackerName'],
+            order: [[Sequelize.literal('Count'), 'DESC']],
+            limit: 1
+        });
+        const topNemesis = topNemesisResult ? topNemesisResult.attackerName : null;
+        const topNemesisCount = topNemesisResult ? topNemesisResult.get('Count') : null;
         
         this.verbose('Sending discord message');
         await this.sendDiscordMessage({
             embed: {
-                title : "Squad server stats"
+                title : `Squad server stats ${steamID}`
             }
         });
         // await this.sendDiscordMessage({
