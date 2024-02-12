@@ -682,8 +682,6 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
 
             //Trying to get it from Whitelister                
             try {
-                var playerSteamID = null;
-
                 //Trying to get it from Whitelister                
                 const userUrl = `${this.options.whitelisterUrl}/api/players/read/from/discordUserId/${message.author.id}`;
                 const cookie =  `stok=${this.whitelisterToken}`;
@@ -692,20 +690,18 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
                 
                 const response = await axios.get(userUrl , { headers: { Cookie: cookie }});
 
-                this.verbose(1, `Response status: ${response.status}`);
-
                 if (response.status == 200 && response.data) {                   
                     this.verbose(1, `Found steamid ${response.data.steamid64} for discord user ${message.author.id}`);
-                    playerSteamID = response.data.steamid64;
+                    const playerSteamID = response.data.steamid64;
+                    if (!playerSteamID) {
+                        return message.reply(`Your Discord Account is not linked to an In Game Account in whitelister.\nUse whitelister to begin linking your account.\nOr use \`!mystats "Your SteamID"\``);
+                    }
+                    this.verbose(1, `Posting user stats to discord for steamId ${playerSteamID}`);
+                    await this.postUserStats(playerSteamID);
                 }
                 else {
                     this.verbose(1, `Error receiving user information from whitelister, response: ${response.data}`);
                 }
-                if (!playerSteamID) {
-                    return message.reply(`Your Discord Account is not linked to an In Game Account in whitelister.\nUse whitelister to begin linking your account.\nOr use \`!mystats "Your SteamID"\``);
-                }
-                this.verbose(1, `Posting user stats for steamId ${playerSteamId}`);
-                await this.postUserStats(playerSteamID);
             } catch (error) {
                 return this.handleApiError(error);
             }
