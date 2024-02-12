@@ -692,13 +692,14 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
                 this.verbose(1, `URL: ${userUrl}`);
                 this.verbose(1, `Cookie: ${cookie}`);
                 
-                const response = await axios.get(userUrl,{ headers: {'Cookie': cookie }});
+                const response = await axios.get(userUrl , { headers: { Cookie: cookie }});
+
                 this.verbose(1, `Response status: ${response.status}`);
                 this.verbose(1, `Response status from data: ${response.data.status}`);
                 
-                if (response.status == 200 && response.data) {
-                    playerSteamID = response.data.steamid64;
+                if (response.status == 200 && response.data) {                   
                     this.verbose(1, `Found steamid ${playerSteamID} for discord user ${message.author.id}`);
+                    playerSteamID = response.data.steamid64;
                 }
                 else {
                     this.verbose(`Error receiving user information from whitelister, status: ${response.status}`);
