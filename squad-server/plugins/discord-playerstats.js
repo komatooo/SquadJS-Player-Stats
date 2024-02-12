@@ -147,7 +147,7 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
 
         this.models = {};
         
-        this.whitelisterCookie = null;
+        this.whitelisterToken = null;
 
         this.createModel(
             'Player',
@@ -430,10 +430,10 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
                 });
             
             if (response.status == 200) {
-                this.whitelisterCookie = response.headers["Set-Cookie"];
+                this.whitelisterToken = response.data.userDt.token;
                 this.verbose(1, `Succesfully signed in to whitelister, response: ${response}`);
             } else {
-                this.verbose(1, `Error signing in to whitelister, response status ${response.status}`);
+                this.verbose(1, `Error signing in to whitelister, token: ${this.whitelisterToken}`);
             }
     }
 
@@ -660,7 +660,7 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
 
         const mystatsCmdRegex = new RegExp("^!" + this.options.inDiscordStatsCommand + "(?:\\s+(\\d{17}))?$");
 
-        const linkCmdRegex = new RegExp("^!" + this.options.linkDiscordAccountCommand + "$");
+        // const linkCmdRegex = new RegExp("^!" + this.options.linkDiscordAccountCommand + "$");
 
         if (message.content.match(manualCmdRegex) && this.options.enableDailyStats === true) {
             if (message.member._roles.includes(this.options.dailymanualCmdRole)) {
@@ -687,9 +687,9 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
                 const response = 
                     await axios.get(
                         `${this.options.whitelisterUrl}api/players/read/from/discordUserId/${message.author.id}`,
-                        { headers: {'Cookie': this.whitelisterCookie }}
+                        { headers: {'Cookie': `stok==${this.whitelisterToken}` }}
                     );
-                if (response.status == 200)
+                if (response.status == 200 && response.data)
                     playerSteamID = response.data.steamid64;
                 if (!playerSteamID) {
                     return message.reply(`Your Discord Account is not linked to an In Game Account.\nUse \`!${this.options.linkDiscordAccountCommand}\` in Discord to begin linking your account.\nOr use \`!mystats "Your SteamID"\``);
@@ -703,26 +703,26 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
             return message.reply('In Discord Stats are not enabled.');
         }
 
-        if (message.content.match(linkCmdRegex) && this.options.enableInDiscordStatsCommand === true) {
-            // Generate a random 6-digit code
-            const linkCode = Math.floor(100000 + Math.random() * 900000);
-            // Add Link Code to Database
-            await this.models.LinkCode.create({
-                linkCode: linkCode,
-                discordID: message.author.id
-            });
-            // Tell User to Make sure they can receive DMs from the Bot
-            await message.reply(`Please check your DMs for your linking code.\nMake sure you can receive DMs from this Bot.`);
-            // Send Message to Discord User's DM
-            await message.author.send({
-                embed: {
-                    title: `Your linking code is: \`${linkCode}\``,
-                    description: `Please use \`!${this.options.linkInGameAccountCommand} ${linkCode}\` in-game to link your account.`,
-                    color: this.options.linkDiscordEmbedColor,
-                    timestamp: new Date().toISOString()
-                }
-            });
-        }
+        // if (message.content.match(linkCmdRegex) && this.options.enableInDiscordStatsCommand === true) {
+        //     // Generate a random 6-digit code
+        //     const linkCode = Math.floor(100000 + Math.random() * 900000);
+        //     // Add Link Code to Database
+        //     await this.models.LinkCode.create({
+        //         linkCode: linkCode,
+        //         discordID: message.author.id
+        //     });
+        //     // Tell User to Make sure they can receive DMs from the Bot
+        //     await message.reply(`Please check your DMs for your linking code.\nMake sure you can receive DMs from this Bot.`);
+        //     // Send Message to Discord User's DM
+        //     await message.author.send({
+        //         embed: {
+        //             title: `Your linking code is: \`${linkCode}\``,
+        //             description: `Please use \`!${this.options.linkInGameAccountCommand} ${linkCode}\` in-game to link your account.`,
+        //             color: this.options.linkDiscordEmbedColor,
+        //             timestamp: new Date().toISOString()
+        //         }
+        //     });
+        // }
         return;
     }
 
