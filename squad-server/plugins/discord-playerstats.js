@@ -610,21 +610,29 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
                 this.verbose(1, `Trying to get steamId from whitelister for discord user ${message.author.id}.`);
                 
                 const response = await axios.get(userUrl , { headers: { Cookie: cookie }});
+                const userNotFoundMessage = 
+                    `Your Discord Account is not linked to an In Game Account in whitelister.\nUse whitelister to begin linking your account.\nOr use \`!mystats "Your SteamID"\``;
                 
                 // If user found in whitelister
-                if (response.status == 200 && response.data) {                   
-                    this.verbose(1, `Found steamid ${response.data.steamid64} for discord user ${message.author.id}`);
-                    const playerSteamID = response.data.steamid64;
+                if (response.status == 200) {                   
+                    if (response.data) {
 
-                    // If user has steamId
-                    if (!playerSteamID) {
-                        return message.reply(`Your Discord Account is not linked to an In Game Account in whitelister.\nUse whitelister to begin linking your account.\nOr use \`!mystats "Your SteamID"\``);
+                        this.verbose(1, `Found steamid ${response.data.steamid64} for discord user ${message.author.id}`);
+                        const playerSteamID = response.data.steamid64;
+
+                        // If user has steamId
+                        if (!playerSteamID) {
+                            return message.reply(userNotFoundMessage);                            
+                        }
+
+                        this.verbose(1, `Posting user stats to discord for steamId ${playerSteamID}`);
+                        await this.postUserStats(playerSteamID);
+                    } else {
+                        return message.reply(userNotFoundMessage);
                     }
-                    this.verbose(1, `Posting user stats to discord for steamId ${playerSteamID}`);
-                    await this.postUserStats(playerSteamID);
                 }
                 else {
-                    this.verbose(1, `Error receiving user information from whitelister, response: ${response.data}`);
+                    this.verbose(1, `Error receiving user information from whitelister, status=${response.status} response: ${response.data}`);
                 }
             } catch (error) {
                 return this.handleApiError(error);
@@ -990,31 +998,31 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
                         value: kdRatio,
                         inline: true
                     },
-                    {
-                        name: 'Times Teamkilled',
-                        value: teamkilledCount.toString(),
-                        inline: true
-                    },
-                    {
-                        name: 'Total Revives',
-                        value: revivesCount.toString(),
-                        inline: true
-                    },
-                    {
-                        name: 'Favorite Weapon',
-                        value: modifyString(weapon),
-                        inline: true
-                    },
-                    {
-                        name: 'Top Victim',
-                        value: `\`${lastName}\` has Killed \`${topVictim}\` \`${topVictimCount}\` Times!`,
-                        inline: true
-                    },
-                    {
-                        name: 'Top Nemesis',
-                        value: `\`${topNemesis}\` has Killed \`${lastName}\` \`${topNemesisCount}\` Times!`,
-                        inline: true
-                    },
+                    // {
+                    //     name: 'Times Teamkilled',
+                    //     value: teamkilledCount.toString(),
+                    //     inline: true
+                    // },
+                    // {
+                    //     name: 'Total Revives',
+                    //     value: revivesCount.toString(),
+                    //     inline: true
+                    // },
+                    // {
+                    //     name: 'Favorite Weapon',
+                    //     value: modifyString(weapon),
+                    //     inline: true
+                    // },
+                    // {
+                    //     name: 'Top Victim',
+                    //     value: `\`${lastName}\` has Killed \`${topVictim}\` \`${topVictimCount}\` Times!`,
+                    //     inline: true
+                    // },
+                    // {
+                    //     name: 'Top Nemesis',
+                    //     value: `\`${topNemesis}\` has Killed \`${lastName}\` \`${topNemesisCount}\` Times!`,
+                    //     inline: true
+                    // },
                 ],
                 timestamp: new Date().toISOString()
             }
