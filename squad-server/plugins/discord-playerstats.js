@@ -686,13 +686,14 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
 
                 //Trying to get it from Whitelister                
                 const userUrl = `${this.options.whitelisterUrl}/api/players/read/from/discordUserId/${message.author.id}`;
-                this.verbose(1, `Trying to get steamId from whitelister for discord user ${message.author.id}, using URL: ${userUrl} and token: ${this.whitelisterToken}`);
+                const cookie =  `stok=${this.whitelisterToken}`;
+
+                this.verbose(1, `Trying to get steamId from whitelister for discord user ${message.author.id}.`);
+                this.verbose(1, `URL: ${userUrl}`);
+                this.verbose(1, `Cookie: ${cookie}`);
                 
-                
-                const response = await axios.get(
-                    userUrl,
-                    { headers: {'Cookie': `stok=${this.whitelisterToken}` }}
-                );
+                const response = await axios.get(userUrl,{ headers: {'Cookie': cookie }});
+
                 if (response.status == 200 && response.data) {
                     playerSteamID = response.data.steamid64;
                     this.verbose(1, `Found steamid ${playerSteamID} for discord user ${message.author.id}`);
@@ -701,7 +702,7 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
                     this.verbose(`Error receiving user information from whitelister, status: ${response.status}`);
                 }
                 if (!playerSteamID) {
-                    return message.reply(`Your Discord Account is not linked to an In Game Account.\nUse \`!${this.options.linkDiscordAccountCommand}\` in Discord to begin linking your account.\nOr use \`!mystats "Your SteamID"\``);
+                    return message.reply(`Your Discord Account is not linked to an In Game Account in whitelister.\nUse whitelister to begin linking your account.\nOr use \`!mystats "Your SteamID"\``);
                 }
                 await this.postUserStats(playerSteamID);
             } catch (error) {
