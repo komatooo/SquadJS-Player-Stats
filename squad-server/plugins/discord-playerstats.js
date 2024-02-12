@@ -687,7 +687,7 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
                 this.verbose(1, `Trying to get steamId from whitelister for discord user ${message.author.id}`);
                 const response = 
                     await axios.get(
-                        `${this.options.whitelisterUrl}api/players/read/from/discordUserId/${message.author.id}`,
+                        `${this.options.whitelisterUrl}/api/players/read/from/discordUserId/${message.author.id}`,
                         { headers: {'Cookie': `stok=${this.whitelisterToken}` }}
                     );
                 if (response.status == 200 && response.data)
