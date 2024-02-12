@@ -1045,31 +1045,27 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
         const topNemesisCount = topNemesisResult ? topNemesisResult.get('Count') : null;
         
         this.verbose('Sending discord message');
+
         await this.sendDiscordMessage({
             embed: {
-                title : `Squad server stats ${steamID}`
-            }
-        });
-        // await this.sendDiscordMessage({
-        //     embed: {
-        //         title: `Squad Server Stats for the Last ${this.options.daysBackToQuery.toString()} Days`,
-        //         color: this.options.inDiscordStatsEmbedColor,
-        //         fields: [
-        //             {
-        //                 name: 'Found in Game Name',
-        //                 value: lastName,
-        //                 inline: false
-        //             },
-        //             {
-        //                 name: 'SteamID',
-        //                 value: steamID,
-        //                 inline: true
-        //             },
-        //             {
-        //                 name: 'Total Kills',
-        //                 value: killsCount.toString(),
-        //                 inline: true
-        //             },
+                title: `Squad Server Stats for the Last ${this.options.daysBackToQuery.toString()} Days`,
+                color: this.options.inDiscordStatsEmbedColor,
+                fields: [
+                    {
+                        name: 'Found in Game Name',
+                        value: lastName,
+                        inline: false
+                    },
+                    {
+                        name: 'SteamID',
+                        value: steamID,
+                        inline: true
+                    },
+                    {
+                        name: 'Total Kills',
+                        value: killsCount.toString(),
+                        inline: true
+                    },
         //             {
         //                 name: 'Total Wounds',
         //                 value: woundsCount.toString(),
@@ -1110,10 +1106,10 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
         //                 value: `\`${topNemesis}\` has Killed \`${lastName}\` \`${topNemesisCount}\` Times!`,
         //                 inline: true
         //             },
-        //         ],
-        //         timestamp: new Date().toISOString()
-        //     }
-        // });
+                ],
+                timestamp: new Date().toISOString()
+            }
+        });
     }
 }
 
