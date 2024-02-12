@@ -419,7 +419,7 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
     }
 
     async authenticateInWhitelister() {
-            this.verbose(1, `Trying to sign in to whitelister using URL: ${this.options.whitelisterUrl}/api/login, username: ${this.options.whitelisterLogin}`);
+            this.verbose(1, `Trying to sign in to whitelister using URL: ${this.options.whitelisterUrl}`);
 
             const response = 
                 await axios.post(
@@ -429,15 +429,12 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
                     "password": this.options.whitelisterPassword 
                 });
             
-            if (response.status == 200) {
+            if (response.status == 200 && response.data.status == "login_ok") {
                 this.verbose(1, `Succesfully signed in to whitelister,  data: ${response.data}`);
-                this.verbose(1, `Status: ${response.data.status}`);
-                this.verbose(1, `userDt: ${response.data.userDt}`);
-                this.verbose(1, `token: ${response.data.userDt.token}`);
-                // this.whitelisterToken = response.data.userDt.token;
+                this.whitelisterToken = response.data.userDt.token;
 
             } else {
-                this.verbose(1, `Error signing in to whitelister.`);
+                this.verbose(1, `Error signing in to whitelister, status: ${response.data.status}.`);
             }
     }
 
