@@ -688,7 +688,7 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
                 const response = 
                     await axios.get(
                         `${this.options.whitelisterUrl}api/players/read/from/discordUserId/${message.author.id}`,
-                        { headers: {'Cookie': `stok==${this.whitelisterToken}` }}
+                        { headers: {'Cookie': `stok=${this.whitelisterToken}` }}
                     );
                 if (response.status == 200 && response.data)
                     playerSteamID = response.data.steamid64;
