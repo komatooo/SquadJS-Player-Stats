@@ -682,23 +682,17 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
 
             //Trying to get it from Whitelister                
             try {
-                const playerSteamID = null;
+                var playerSteamID = null;
 
                 //Trying to get it from Whitelister                
                 const userUrl = `${this.options.whitelisterUrl}/api/players/read/from/discordUserId/${message.author.id}`;
                 const cookie =  `stok=${this.whitelisterToken}`;
 
                 this.verbose(1, `Trying to get steamId from whitelister for discord user ${message.author.id}.`);
-                this.verbose(1, `URL: ${userUrl}`);
-                this.verbose(1, `Cookie: ${cookie}`);
                 
                 const response = await axios.get(userUrl , { headers: { Cookie: cookie }});
 
                 this.verbose(1, `Response status: ${response.status}`);
-                                
-                for (const [key, value] of Object.entries(response.data)) {
-                    this.verbose(1, `Response item ${key}:${value}`);
-                }
 
                 if (response.status == 200 && response.data) {                   
                     this.verbose(1, `Found steamid ${response.data.steamid64} for discord user ${message.author.id}`);
@@ -710,6 +704,7 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
                 if (!playerSteamID) {
                     return message.reply(`Your Discord Account is not linked to an In Game Account in whitelister.\nUse whitelister to begin linking your account.\nOr use \`!mystats "Your SteamID"\``);
                 }
+                this.verbose(1, `Posting user stats for steamId ${playerSteamId}`);
                 await this.postUserStats(playerSteamID);
             } catch (error) {
                 return this.handleApiError(error);
