@@ -611,7 +611,7 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
                 
                 const response = await axios.get(userUrl , { headers: { Cookie: cookie }});
                 const userNotFoundMessage = 
-                    `Your Discord Account is not linked to an In Game Account in whitelister.\nUse whitelister to begin linking your account.\nOr use \`!mystats "Your SteamID"\``;
+                    `Your Discord Account is not linked to an In Game Account in whitelister.\nUse whitelister to begin linking your account.`;
                 
                 // If user found in whitelister
                 if (response.status == 200) {                   
@@ -998,21 +998,21 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
                         value: kdRatio,
                         inline: true
                     },
-                    // {
-                    //     name: 'Times Teamkilled',
-                    //     value: teamkilledCount.toString(),
-                    //     inline: true
-                    // },
-                    // {
-                    //     name: 'Total Revives',
-                    //     value: revivesCount.toString(),
-                    //     inline: true
-                    // },
-                    // {
-                    //     name: 'Favorite Weapon',
-                    //     value: modifyString(weapon),
-                    //     inline: true
-                    // },
+                    {
+                        name: 'Times Teamkilled',
+                        value: teamkilledCount.toString(),
+                        inline: true
+                    },
+                    {
+                        name: 'Total Revives',
+                        value: revivesCount.toString(),
+                        inline: true
+                    },
+                    {
+                        name: 'Favorite Weapon',
+                        value: modifyString(weapon),
+                        inline: true
+                    },
                     // {
                     //     name: 'Top Victim',
                     //     value: `\`${lastName}\` has Killed \`${topVictim}\` \`${topVictimCount}\` Times!`,
