@@ -430,7 +430,7 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
                 });
             
             if (response.status == 200 && response.data.status == "login_ok") {
-                this.verbose(1, `Succesfully signed in to whitelister,  data: ${response.data}`);
+                this.verbose(1, `Succesfully signed in to whitelister.`);
                 this.whitelisterToken = response.data.userDt.token;
 
             } else {
@@ -683,15 +683,23 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
             //Trying to get it from Whitelister                
             try {
                 const playerSteamID = null;
+
                 //Trying to get it from Whitelister                
-                this.verbose(1, `Trying to get steamId from whitelister for discord user ${message.author.id}`);
-                const response = 
-                    await axios.get(
-                        `${this.options.whitelisterUrl}/api/players/read/from/discordUserId/${message.author.id}`,
-                        { headers: {'Cookie': `stok=${this.whitelisterToken}` }}
-                    );
-                if (response.status == 200 && response.data)
+                const userUrl = `${this.options.whitelisterUrl}/api/players/read/from/discordUserId/${message.author.id}`;
+                this.verbose(1, `Trying to get steamId from whitelister for discord user ${message.author.id}, using URL: ${userUrl} and token: ${this.whitelisterToken}`);
+                
+                
+                const response = await axios.get(
+                    userUrl,
+                    { headers: {'Cookie': `stok=${this.whitelisterToken}` }}
+                );
+                if (response.status == 200 && response.data) {
                     playerSteamID = response.data.steamid64;
+                    this.verbose(1, `Found steamid ${playerSteamID} for discord user ${message.author.id}`);
+                }
+                else {
+                    this.verbose(`Error receiving user information from whitelister, status: ${response.status}`);
+                }
                 if (!playerSteamID) {
                     return message.reply(`Your Discord Account is not linked to an In Game Account.\nUse \`!${this.options.linkDiscordAccountCommand}\` in Discord to begin linking your account.\nOr use \`!mystats "Your SteamID"\``);
                 }
