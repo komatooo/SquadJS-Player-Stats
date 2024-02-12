@@ -693,7 +693,9 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
                 this.verbose(1, `Cookie: ${cookie}`);
                 
                 const response = await axios.get(userUrl,{ headers: {'Cookie': cookie }});
-
+                this.verbose(1, `Response status: ${response.status}`);
+                this.verbose(1, `Response status from data: ${response.data.status}`);
+                
                 if (response.status == 200 && response.data) {
                     playerSteamID = response.data.steamid64;
                     this.verbose(1, `Found steamid ${playerSteamID} for discord user ${message.author.id}`);
