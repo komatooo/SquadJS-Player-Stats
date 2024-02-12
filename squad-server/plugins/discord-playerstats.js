@@ -601,19 +601,21 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
                 return;
             }
 
-            //Trying to get it from Whitelister                
             try {
-                //Trying to get it from Whitelister                
+                //Trying to get steamId  from Whitelister                
                 const userUrl = `${this.options.whitelisterUrl}/api/players/read/from/discordUserId/${message.author.id}`;
                 const cookie =  `stok=${this.whitelisterToken}`;
 
                 this.verbose(1, `Trying to get steamId from whitelister for discord user ${message.author.id}.`);
                 
                 const response = await axios.get(userUrl , { headers: { Cookie: cookie }});
-
+                
+                // If user found in whitelister
                 if (response.status == 200 && response.data) {                   
                     this.verbose(1, `Found steamid ${response.data.steamid64} for discord user ${message.author.id}`);
                     const playerSteamID = response.data.steamid64;
+
+                    // If user has steamId
                     if (!playerSteamID) {
                         return message.reply(`Your Discord Account is not linked to an In Game Account in whitelister.\nUse whitelister to begin linking your account.\nOr use \`!mystats "Your SteamID"\``);
                     }
@@ -981,31 +983,31 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
                         value: kdRatio,
                         inline: true
                     },
-                    {
-                        name: 'Times Teamkilled',
-                        value: teamkilledCount.toString(),
-                        inline: true
-                    },
-                    {
-                        name: 'Total Revives',
-                        value: revivesCount.toString(),
-                        inline: true
-                    },
-                    {
-                        name: 'Favorite Weapon',
-                        value: modifyString(weapon),
-                        inline: true
-                    },
-                    {
-                        name: 'Top Victim',
-                        value: `\`${lastName}\` has Killed \`${topVictim}\` \`${topVictimCount}\` Times!`,
-                        inline: true
-                    },
-                    {
-                        name: 'Top Nemesis',
-                        value: `\`${topNemesis}\` has Killed \`${lastName}\` \`${topNemesisCount}\` Times!`,
-                        inline: true
-                    },
+                    // {
+                    //     name: 'Times Teamkilled',
+                    //     value: teamkilledCount.toString(),
+                    //     inline: true
+                    // },
+                    // {
+                    //     name: 'Total Revives',
+                    //     value: revivesCount.toString(),
+                    //     inline: true
+                    // },
+                    // {
+                    //     name: 'Favorite Weapon',
+                    //     value: modifyString(weapon),
+                    //     inline: true
+                    // },
+                    // {
+                    //     name: 'Top Victim',
+                    //     value: `\`${lastName}\` has Killed \`${topVictim}\` \`${topVictimCount}\` Times!`,
+                    //     inline: true
+                    // },
+                    // {
+                    //     name: 'Top Nemesis',
+                    //     value: `\`${topNemesis}\` has Killed \`${lastName}\` \`${topNemesisCount}\` Times!`,
+                    //     inline: true
+                    // },
                 ],
                 timestamp: new Date().toISOString()
             }
