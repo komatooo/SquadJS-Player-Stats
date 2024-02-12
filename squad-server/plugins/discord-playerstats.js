@@ -859,7 +859,7 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
         });
 
         if (!playerResult) {
-            this.sendDiscordMessage(`There is no statistics for player with steamID ${steamID} yet.`);
+            this.sendDiscordMessage(`There is no statistics for player with steamID \`${steamID}\` yet.`);
             return;
         }
 
