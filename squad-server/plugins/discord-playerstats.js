@@ -1081,31 +1081,31 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
                         value: kdRatio,
                         inline: true
                     },
-        //             {
-        //                 name: 'Times Teamkilled',
-        //                 value: teamkilledCount.toString(),
-        //                 inline: true
-        //             },
-        //             {
-        //                 name: 'Total Revives',
-        //                 value: revivesCount.toString(),
-        //                 inline: true
-        //             },
-        //             {
-        //                 name: 'Favorite Weapon',
-        //                 value: modifyString(weapon),
-        //                 inline: true
-        //             },
-        //             {
-        //                 name: 'Top Victim',
-        //                 value: `\`${lastName}\` has Killed \`${topVictim}\` \`${topVictimCount}\` Times!`,
-        //                 inline: true
-        //             },
-        //             {
-        //                 name: 'Top Nemesis',
-        //                 value: `\`${topNemesis}\` has Killed \`${lastName}\` \`${topNemesisCount}\` Times!`,
-        //                 inline: true
-        //             },
+                    {
+                        name: 'Times Teamkilled',
+                        value: teamkilledCount.toString(),
+                        inline: true
+                    },
+                    {
+                        name: 'Total Revives',
+                        value: revivesCount.toString(),
+                        inline: true
+                    },
+                    {
+                        name: 'Favorite Weapon',
+                        value: modifyString(weapon),
+                        inline: true
+                    },
+                    {
+                        name: 'Top Victim',
+                        value: `\`${lastName}\` has Killed \`${topVictim}\` \`${topVictimCount}\` Times!`,
+                        inline: true
+                    },
+                    {
+                        name: 'Top Nemesis',
+                        value: `\`${topNemesis}\` has Killed \`${lastName}\` \`${topNemesisCount}\` Times!`,
+                        inline: true
+                    },
                 ],
                 timestamp: new Date().toISOString()
             }
