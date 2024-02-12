@@ -430,10 +430,14 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
                 });
             
             if (response.status == 200) {
-                this.whitelisterToken = response.data.userDt.token;
-                this.verbose(1, `Succesfully signed in to whitelister, response: ${response}`);
+                this.verbose(1, `Succesfully signed in to whitelister,  data: ${response.data}`);
+                this.verbose(1, `Status: ${response.data.status}`);
+                this.verbose(1, `userDt: ${response.data.userDt}`);
+                this.verbose(1, `token: ${response.data.userDt.token}`);
+                // this.whitelisterToken = response.data.userDt.token;
+
             } else {
-                this.verbose(1, `Error signing in to whitelister, token: ${this.whitelisterToken}`);
+                this.verbose(1, `Error signing in to whitelister.`);
             }
     }
 
