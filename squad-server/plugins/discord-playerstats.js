@@ -928,8 +928,8 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
             order: [[Sequelize.literal('Count'), 'DESC']],
             limit: 1
         });
-        const topVictim = topVictimResult ? topVictimResult.victimName : null;
-        const topVictimCount = topVictimResult ? topVictimResult.get('Count') : null;
+        const topVictim = topVictimResult ? topVictimResult.victimName : "";
+        const topVictimCount = topVictimResult ? topVictimResult.get('Count') : 0;
 
         // Top Nemesis
         const topNemesisResult = await this.models.Death.findOne({
@@ -944,8 +944,8 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
             order: [[Sequelize.literal('Count'), 'DESC']],
             limit: 1
         });
-        const topNemesis = topNemesisResult ? topNemesisResult.attackerName : null;
-        const topNemesisCount = topNemesisResult ? topNemesisResult.get('Count') : null;
+        const topNemesis = topNemesisResult ? topNemesisResult.attackerName : "";
+        const topNemesisCount = topNemesisResult ? topNemesisResult.get('Count') : 0;
         
         this.verbose('Sending discord message');
 
