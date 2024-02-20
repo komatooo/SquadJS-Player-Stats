@@ -611,7 +611,7 @@ export default class DiscordPlayerStats extends DiscordBasePlugin {
                 
                 const response = await axios.get(userUrl , { headers: { Cookie: cookie }});
                 const userNotFoundMessage = 
-                    `Your Discord Account is not linked to an In Game Account in whitelister.\nUse whitelister to begin linking your account.`;
+                    `Твій діскорд акаунт не має прив'язки до наших серверів / Your discord account is not linked to our servers. Як прив'язати акаунт вказано тут / Follow link to link your discord account: https://discord.com/channels/1013891077847126098/1128399380026753054`;
                 
                 // If user found in whitelister
                 if (response.status == 200) {                   
